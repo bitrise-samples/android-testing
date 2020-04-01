@@ -1,7 +1,15 @@
+import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+
 buildscript {
 
     repositories {
-        jcenter()
+        jcenter {
+            content {
+                // just allow to include kotlinx projects
+                // detekt needs 'kotlinx-html' for the html report
+                includeGroup("org.jetbrains.kotlinx")
+            }
+        }
         google()
     }
     dependencies {
@@ -21,8 +29,18 @@ dependencies {
 }
 
 detekt {
+    toolVersion = "${ProjectVersions.DETEKT_VERSION}"
     failFast = true
+    input = files("${projectDir}", "**/src/main/java", "**/src/main/kotlin")
     config = files("${project.rootDir}/detekt.yml")
+    buildUponDefaultConfig = true
+    ignoreFailures = true
+
+    reports {
+        html.enabled = true
+        xml.enabled = true
+        txt.enabled = true
+    }
 }
 
 allprojects {
